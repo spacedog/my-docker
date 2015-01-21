@@ -1,0 +1,53 @@
+---
+- name: install dokuwiki
+  hosts: all
+
+  vars:
+    epel: 'http://fedora-epel.mirror.iweb.com/6/i386/epel-release-6-8.noarch.rpm'
+
+  tasks:
+    - name: install epel repository
+      yum:
+        name={{epel}}
+        state=present
+      notify: yum make cache
+      register: install_result
+
+    - name: hack proxy
+      replace:
+        backup=yes
+        dest=/etc/yum.repos.d/epel.repo
+        regexp=https
+        replace=http
+      when: install_result|success
+
+    - name: install dokuwiki
+      yum:
+        name=dokuwiki
+        state=present
+      when: install_result|success
+
+    - name: remove welcome module
+      file:
+        path=/etc/httpd/conf.d/welcome.conf
+        state=absent
+      when: install_result|success
+
+    - name: stoped apache service
+      service:
+        name=httpd
+        state=stopped
+        enabled=no
+      when: install_result|success
+
+    - name: allow from all to access dokuwiki
+      lineinfile:
+        dest=/etc/httpd/conf.d/dokuwiki.conf
+        regexp='\s*Allow from.*$'
+        line='Allow from all'
+      when: install_result|success
+        
+
+  handlers:
+    - name: yum makecache
+      command: yum makecache

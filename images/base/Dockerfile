@@ -4,4 +4,4 @@ RUN         rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-rele
 RUN         sed -i 's/https/http/' /etc/yum.repos.d/epel.repo
 RUN         yum makecache
 RUN         yum -y install ansible git
-RUN         echo '[local]\nlocalhost\n' > /etc/ansible/hosts
+ADD         hosts /etc/ansible/hosts
