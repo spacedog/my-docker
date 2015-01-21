@@ -1,0 +1,19 @@
+---
+- name: run dokuwiki docker container
+  hosts: all
+  gather_facts: no
+
+  vars:
+    data_src_dir: /home/anton/work/my/volumes/dokuwiki/data
+    data_dst_dir: /var/lib/dokuwiki/data
+
+  tasks:
+    - name: start docker container
+      docker:
+        image=abaranov/dokuwiki
+        name=dokuwiki
+        detach=yes
+        ports=8080:80
+        state=running
+        volumes={{data_src_dir}}:{{data_dst_dir}}
+
