@@ -1,0 +1,9 @@
+---
+- name: install erlang
+  hosts: all
+
+  tasks:
+    - name: install erlang
+      yum:
+        name=erlang
+        state=present
