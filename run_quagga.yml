@@ -1,0 +1,20 @@
+---
+- name: run quagga docker container
+  hosts: all
+  gather_facts: no
+
+  vars:
+    src_dir: /home/anton/work/my/volumes/quagga/R1
+    dst_dir: /etc/quagga
+
+
+  tasks:
+    - name: start docker container
+      docker:
+        image=abaranov/quagga
+        name=R1
+        detach=yes
+        publish_all_ports=yes
+        state=running
+        volumes="{{src_dir}}:{{dst_dir}}"
+
